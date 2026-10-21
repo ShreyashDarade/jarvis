@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Jarvis</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%2335d0ff' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%2335d0ff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <a class="skip" href="#controls">Skip to controls</a>
+
+  <header class="top">
+    <div class="wordmark">
+      <h1>Jarvis</h1>
+      <p>AI voice assistant</p>
+    </div>
+
+    <div id="perm-banner" class="perm-banner" hidden role="status">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="perm-text">Pre-approved for this session</span>
+      <span id="perm-timer" class="mono"></span>
+      <button id="revoke" class="btn small" type="button">Ask me again</button>
+    </div>
+
+    <div id="autonomous-banner" class="perm-banner danger-banner" hidden role="status">
+      <span class="dot danger-dot" aria-hidden="true"></span>
+      <span id="autonomous-banner-text">⚡ AUTONOMOUS MODE: All actions auto-approved (Signed)</span>
+      <button id="revoke-auto" class="btn small btn-red" type="button">Exit Auto</button>
+    </div>
+
+    <div class="kill-wrap">
+      <button id="kill" class="btn danger" type="button" aria-describedby="kill-hint">Kill switch</button>
+      <span id="kill-hint" class="kbd-hint"><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>K</kbd> works anywhere</span>
+    </div>
+  </header>
+
+  <main class="stage">
+    <aside id="controls" class="panel" aria-labelledby="access-title">
+      <fieldset id="modes">
+        <legend id="access-title">Access level</legend>
+        <label class="choice">
+          <input type="radio" name="mode" value="1" checked>
+          <span><strong>Ask before every action</strong><small>Safest. You approve everything.</small></span>
+        </label>
+        <label class="choice">
+          <input type="radio" name="mode" value="2">
+          <span><strong>Ask before changes</strong><small>Reads run automatically; opening apps, writing files and running code ask first.</small></span>
+        </label>
+        <label class="choice choice-danger" id="mode-3-label">
+          <input type="radio" name="mode" value="3" id="mode-3-radio">
+          <span><strong class="text-danger">⚡ Autonomous (Auto-Approved)</strong><small>Execute in one seamless flow. Auto-approves all actions per signed agreement.</small></span>
+        </label>
+      </fieldset>
+
+      <div id="disclaimer-card" class="disclaimer-box" role="region" aria-labelledby="disclaimer-title">
+        <div class="disclaimer-header">
+          <span class="warning-icon" aria-hidden="true">⚠️</span>
+          <h3 id="disclaimer-title">Autonomous Control Agreement</h3>
+        </div>
+        <p class="disclaimer-desc">Gives all permissions as auto-approved so Jarvis executes multi-step tasks in one continuous flow without asking for approval on each step.</p>
+
+        <div class="disclaimer-details">
+          <div class="disclaimer-can">
+            <strong>What Jarvis CAN do:</strong>
+            <ul>
+              <li>Open desktop apps (Claude, VS Code, Notepad) and web pages</li>
+              <li>Focus app windows and inspect UI elements</li>
+              <li>Read screen text, buttons, and coordinates via OCR</li>
+              <li>Type text, click controls, and press Enter to submit prompts</li>
+              <li>Run host shell commands & read/write workspace or system files</li>
+              <li>Execute complete multi-step tasks in <strong>one single flow</strong></li>
+            </ul>
+          </div>
+          <div class="disclaimer-cannot">
+            <strong>What Jarvis CANNOT do:</strong>
+            <ul>
+              <li>Bypass Windows User Account Control (UAC) admin prompts</li>
+              <li>Operate when Kill Switch (<kbd>Ctrl+Alt+K</kbd>) is triggered</li>
+              <li>Access encrypted Windows credentials</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="agreement-section" class="agreement-section">
+          <label class="check agreement-check">
+            <input type="checkbox" id="agree-terms">
+            <span>I accept the terms and authorize Jarvis to perform autonomous desktop actions without per-step approvals.</span>
+          </label>
+          <div class="signature-row" id="signature-input-row">
+            <input type="text" id="signer-name" placeholder="Full name / digital signature" autocomplete="off">
+            <button type="button" id="sign-agree-btn" class="btn btn-red small" disabled>Sign & Enable</button>
+          </div>
+          <div id="agreement-signed-badge" class="signed-badge" hidden>
+            <span>✓ Signed by <strong id="signed-by-name">User</strong> · Full Auto Mode Active</span>
+            <button type="button" id="revoke-agreement-btn" class="linkish text-muted">Revoke</button>
+          </div>
+        </div>
+      </div>
+
+      <fieldset id="grants">
+        <legend>Allow once for this session</legend>
+        <button id="select-all" class="btn small" type="button">Select all of these</button>
+        <p class="hint">Pre-approve these so Jarvis stops asking. Expires after 1 hour, when you end the session, or when you press the kill switch. You can change it at any time.</p>
+        <label class="check"><input type="checkbox" data-tools="open_app,find_apps"> <span>Open apps</span></label>
+        <label class="check"><input type="checkbox" data-tools="open_url"> <span>Open web pages</span></label>
+        <label class="check"><input type="checkbox" data-tools="list_files,read_file,system_info,read_system_file"> <span>Read files and system info</span></label>
+        <label class="check"><input type="checkbox" data-tools="write_file,write_system_file"> <span>Write files in workspace & system</span></label>
+        <label class="check"><input type="checkbox" data-tools="inspect_active_window,focus_window,read_screen,click_in_window,type_in_window,press_key_in_window"> <span>Type, click & press keys in apps</span></label>
+        <label class="check"><input type="checkbox" data-tools="run_shell_command"> <span>Run shell commands</span></label>
+        <p class="hint">In Mode 1 or 2, unselected actions require confirmation. In Mode 3, all actions are auto-approved per agreement.</p>
+        <p id="sandbox-status" class="hint" role="status" hidden></p>
+        <p id="windows-ui-status" class="hint" role="status" hidden></p>
+      </fieldset>
+
+      <div class="actions">
+        <button id="start" class="btn primary" type="button">Start talking</button>
+        <button id="end" class="btn" type="button" hidden>End session</button>
+      </div>
+      <p class="hint">Use headphones. Approvals are clicked here, never given by voice.</p>
+    </aside>
+
+    <section class="core" aria-label="Assistant status">
+      <canvas id="hud" aria-hidden="true"></canvas>
+      <p id="state-label" class="state-label" role="status">Standing by</p>
+      <p id="state-detail" class="state-detail"></p>
+      <ul id="caps" class="caps" aria-label="What Jarvis can do right now">
+        <li data-cap="apps" data-on="yes"><span class="mark" aria-hidden="true"></span>Open apps</li>
+        <li data-cap="web" data-on="yes"><span class="mark" aria-hidden="true"></span>Web pages</li>
+        <li data-cap="files" data-on="yes"><span class="mark" aria-hidden="true"></span>Workspace files</li>
+        <li data-cap="code" data-on="unknown"><span class="mark" aria-hidden="true"></span>Run code</li>
+        <li data-cap="windows" data-on="unknown"><span class="mark" aria-hidden="true"></span>Type, click and press keys in apps</li>
+      </ul>
+    </section>
+
+    <aside class="panel convo" aria-labelledby="convo-title">
+      <div class="panel-head"><h2 id="convo-title">Conversation</h2><button id="clear-log" class="linkish" type="button">Clear</button></div>
+      <div id="empty" class="empty">
+        <p>Try saying:</p>
+        <ul>
+          <li>“Open Notepad.”</li>
+          <li>“What files are in my workspace?”</li>
+          <li>“Open example.com in the browser.”</li>
+          <li>“How much memory does this PC have?”</li>
+        </ul>
+      </div>
+      <div id="log" class="log" role="log" aria-live="polite"></div>
+    </aside>
+  </main>
+
+  <section id="approvals" class="approvals" role="alert" aria-label="Approval requests"></section>
+
+  <script>window.JARVIS_TOKEN = "__TOKEN__";</script>
+  <script type="module" src="/static/js/main.js"></script>
+</body>
+</html>

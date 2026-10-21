@@ -1,0 +1,30 @@
+# Build output
+*.exe
+backend/jarvis.exe
+
+# Runtime data: audit log and the workspace tools read/write at runtime
+jarvis_audit.log
+workspace/*
+!workspace/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Go
+backend/vendor/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local env overrides (API keys, local-only settings) - never commit real secrets
+.env
+.env.*
+!.env.example
